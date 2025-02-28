@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float velocidade = 10f;    // A velocidade de movimento
-    public float focaPulo = 10f;     // A força do pulo
+  public float velocidade = 10f;
+  public float focaPulo = 10f;
 
-    public bool noChao = false;      // Verifica se o jogador está no chão
-    public bool andando = false;     // Determina se o jogador está andando
+    public bool noChao = false;
 
-    private Rigidbody2D _rigidbody2D;  // Referência ao Rigidbody2D do jogador
-    private SpriteRenderer _spriteRenderer; // Referência ao SpriteRenderer para inverter a direção do sprite
-    private Animator _animator; // Referência ao Animator para controlar as animações
+    public bool andando = false;
 
-    // Start é chamado antes do primeiro frame
+  private Rigidbody2D _rigidbody2D;
+  private SpriteRenderer  _spriteRenderer;
+  private Animator _animator;
+
+    // Start is called before the first frame update
     void Start()
     {
         _rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
@@ -22,8 +23,8 @@ public class Player : MonoBehaviour
         _animator = gameObject.GetComponent<Animator>();
     }
 
-    // Verifica se o jogador está tocando o chão
-    void OnCollisionStay2D(Collision2D collision)
+
+   void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "chao")
         {
@@ -31,7 +32,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Verifica quando o jogador sai do chão
     void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "chao")
@@ -40,43 +40,47 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Update é chamado a cada frame
+    // Update is called once per frame
     void Update()
     {
-        andando = false;  // Inicializa a variável de "andando" como false no início
+        andando = false;
+        
+      if(Input.GetKey(KeyCode.LeftArrow))
+      {
+        gameObject.transform.position += new Vector3(-velocidade*Time.deltaTime,0,0);
+        //rigidbody2D.AddForce(new Vector2(-velocidade,0));
+        _spriteRenderer.flipX = true;
+        Debug.Log("LeftArrow");
 
-        float moveInput = 0f; // Variável para controlar o movimento
-
-        // Movimentação para a esquerda
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveInput = -1f;  // Define que o jogador vai para a esquerda
-            _spriteRenderer.flipX = true;  // Inverte o sprite para a esquerda
-        }
-
-        // Movimentação para a direita
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            moveInput = 1f;  // Define que o jogador vai para a direita
-            _spriteRenderer.flipX = false;  // Inverte o sprite para a direita
-        }
-
-        // Aplica o movimento horizontal ao jogador
-        _rigidbody2D.velocity = new Vector2(moveInput * velocidade, _rigidbody2D.velocity.y);
-
-        // Se o jogador está se movendo e está no chão, ativa a animação de "andando"
-        if (moveInput != 0 && noChao)
+        if (noChao == true)
         {
             andando = true;
         }
+      }
+        
 
-        // Verifica se o jogador apertou a tecla de pulo e está no chão
-        if (Input.GetKeyDown(KeyCode.Space) && noChao)
+      if(Input.GetKey(KeyCode.RightArrow))
+      {
+        gameObject.transform.position += new Vector3(velocidade*Time.deltaTime,0,0);
+        //rigidbody2D.AddForce(new Vector2(velocidade,0));
+         _spriteRenderer.flipX = false;
+         Debug.Log("RightArrow");
+         
+         if (noChao == true)
+         {
+             andando = true;
+         }
+      }
+
+        if (Input.GetKeyDown(KeyCode.Space) && noChao == true)
         {
-            _rigidbody2D.AddForce(new Vector2(0, 1) * focaPulo, ForceMode2D.Impulse);  // Aplica a força para o pulo
+            _rigidbody2D.AddForce(new Vector2(0, 1) * focaPulo,ForceMode2D.Impulse);
+
+            Debug.Log("Jump");
         }
 
-        // Atualiza a animação no Animator
-        _animator.SetBool("Andando", andando);  // Controla a animação de "Andando"
+        _animator.SetBool("Andando",andando);
+        
+     
     }
 }
