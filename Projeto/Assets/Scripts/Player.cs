@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
 
     public bool noChao = false;
 
-    public bool andando = false;
+    public bool andando = true;
 
   private Rigidbody2D _rigidbody2D;
   private SpriteRenderer  _spriteRenderer;
